@@ -13,7 +13,7 @@ class TgMediaType:
   PHOTO = 'photo'
   VIDEO = 'video'
   AUDIO = 'audio'
-  
+
 
 def send_message(
   tg: TeleBot,
@@ -28,30 +28,30 @@ def send_message(
 ) -> List[Message]:
   """
   Отправляет или обновляет сообщение в телеграм
-  
+
   :param tg: Телебот
-  
+
   :param chat: куда отправить (или какое сообщение обновить)
-  
+
   :param text: текст, который отправить
-  
+
   :param media: фото, видео или аудио, которые нужно отправить
-  
+
   :param media_type: тип медиа
-  
+
   :param disable_web_page_preview: см. Telebot.send_message()
-  
+
   :param reply_markup: см. Telebot.send_message()
-  
+
   :param answer_callback_query_id: см. Telebot.send_message()
-  
+
   :param answer_callback_query_text: см. Telebot.send_message()
-  
+
   :return: то же, что и Telebot.send_message()
   """
   if media is not None and not isinstance(media, list):
     media = [media]
-    
+
   chat = proveTgDestination(chat)
   pieces = provePiece(text)
   text, entities = pieces.toMessage()
@@ -76,14 +76,14 @@ def send_message(
   kwargs = {
     'chat_id' : chat.chatId,
   }
-  
+
   if media_exists:
     kwargs['media'] = _transform_media(media, media_type, text, entities)
   else:
     kwargs['text'] = text
     kwargs['entities'] = entities
-    kwargs['disable_web_page_preview'] = disable_web_page_preview,
-    kwargs['reply_markup'] = reply_markup,
+    kwargs['disable_web_page_preview'] = disable_web_page_preview
+    kwargs['reply_markup'] = reply_markup
 
   if chat.translateToMessageId is not None:
     if 'media' in kwargs:
@@ -106,7 +106,7 @@ def send_message(
     m = (tg.send_media_group(**kwargs)
          if 'media' in kwargs else
          tg.send_message(**kwargs))
-    
+
   if answer_callback_query_id is not None:
     tg.answer_callback_query(
       callback_query_id=answer_callback_query_id,
