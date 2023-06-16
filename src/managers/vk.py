@@ -14,12 +14,19 @@ class Vk(LocatorStorage):
     super().__init__(locator)
     self.config = self.locator.config()
     self.logger = self.locator.logger()
-    self.vk = VkApi(token=self.config.vkToken())
     self.groupId = self.config.vkGroupId()
+    self.vk = VkApi(token=self.config.vkToken())
+    self.api = self.vk.get_api()
+    # self.api.wall.post(
+    #   owner_id=--198785284,
+    #   message='post',
+    #   from_group=1,
+    # )
     self.longpoll = VkBotLongPoll(self.vk, self.groupId)
     
     
   def startLongpoll(self):
+    
     self.logger.info('longpoll started')
     while True:
       try:
@@ -97,10 +104,12 @@ class Vk(LocatorStorage):
       return text
     start = strtext.find(': ', strtext.find('\n')) + 2
     end = strtext.find('\n', start)
-    return (
+    text = (
       text[:start] + P(strtext[start:end], url=m.group(1)) +
-      text[end:m.span(0)[0]] + text[m.span(0)[1]+1:]
+      text[end:m.span(0)[0]] +
+      (text[m.span(0)[1]+1:] if m.span(0)[1]+1 < len(strtext) else '')
     )
+    return text
   
   
   @staticmethod
